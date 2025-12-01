@@ -1,5 +1,5 @@
 import 'package:faisal_pedia/models/user_models.dart';
-import 'package:faisal_pedia/module/home/home_page.dart';
+import 'package:faisal_pedia/module/menu/menu_page.dart';
 import 'package:faisal_pedia/network/network.dart';
 import 'package:faisal_pedia/pref/pref.dart';
 import 'package:faisal_pedia/repository/auth_repository.dart';
@@ -52,7 +52,7 @@ class RegisterNotifier extends ChangeNotifier {
             Pref().simpanUser(users);
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) => const MenuPage()),
               (route) => false,
             );
           } else {
