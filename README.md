@@ -1,216 +1,137 @@
-🛍️ FaisalPedia – Multi-Role E-Commerce App
+<a id="readme-top"></a>
 
-Aplikasi e-commerce dengan alur pemesanan lengkap dan dukungan multi-role (Pembeli, CS1, CS2).
-Dibangun menggunakan Flutter dan PHP REST API.
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <!-- Ganti src logo kalau sudah ada -->
+  <img src="assets/images/logo.png" alt="Logo">
 
-🚀 Tech Stack
-Frontend (Mobile & Web)
+  <h3 align="center">FaisalPedia — Mobile App Toko Online Sederhana</h3>
 
-Flutter 3.8+
+  <p align="center">
+    Test Project: Simulasi alur toko online dengan 3 role (Pembeli, CS1, CS2)
+    <br />
+    <br />
+    <!-- Ganti link repo / demo sesuai kebutuhan -->
+    <a href="https://github.com/F415alarrahman/Faisal-Pedia">View Repository</a>
+    ·
+    <a href="https://faisalarrp.online/">Live Web</a>
+  </p>
+</div>
 
-State Management: Provider / ChangeNotifier
+---
 
-UI Library: Google Fonts, Lottie, CachedNetworkImage, etc.
+## About The Project
 
-HTTP Client: Dio
+FaisalPedia adalah aplikasi mobile (Flutter) untuk simulasi **toko online sederhana** dengan beberapa alur penting:
 
-PDF Handling: Syncfusion PDF, DomPDF (server)
+- Pembeli dapat melihat produk, mengelola keranjang, melakukan checkout, upload bukti pembayaran, dan mengunduh invoice (PDF).
+- CS Layer 1 melakukan verifikasi pembayaran, mengatur stok, export data pesanan ke Excel, dan menangani auto cancel 24 jam.
+- CS Layer 2 memproses pesanan hingga selesai (diproses, dikirim, selesai).
 
-Local Storage: SharedPreferences
+Semua role ini ada dalam **satu aplikasi Flutter**, dan **role bisa diganti langsung dari UI** tanpa login kompleks.
 
-Hosting Web: Netlify
+Aplikasi ini dibuat sebagai **test project** untuk menguji:
 
-Backend
+- Arsitektur mobile app
+- State management
+- Pengelolaan data (API / local)
+- Flow transaksi & status pesanan
+- Mekanisme auto cancel 1×24 jam
 
-PHP Native (Modular API)
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-MySQL Database
+---
 
-PHPMailer (Email Login Notification)
+## Tech Stack / Built With
 
-Midtrans SNAP API (Payment Gateway)
+### Mobile App
 
-File Storage: Local server (uploads)
+- **Framework**: Flutter
+- **Bahasa**: Dart
+- **State Management**: `Provider`
+  - Dipilih karena:
+    - Simple, ringan, bawaan ekosistem Flutter
+    - Mudah di-scale ke arsitektur dengan Notifier / ViewModel
+    - Cocok untuk pemisahan logic UI dan business logic
 
-🏛️ Arsitektur Aplikasi (Frontend)
+### Backend (Testing / Demo)
 
-Aplikasi menggunakan pendekatan layered + MVVM sederhana:
+Backend untuk testing berada di:
 
-lib/
-│
-├── models/ → Model data (Order, User, Product...)
-├── network/ → Base URL, API endpoints
-├── repository/ → Request ke API (GET/POST)
-├── module/
-│ ├── auth/ → Login, register
-│ ├── cart/ → Keranjang, checkout
-│ ├── history/ → Order tracking (Diproses, Dikirim, Selesai)
-│ ├── cs1/ → Dashboard + verifikasi CS1
-│ ├── cs2/ → Dashboard + pemrosesan CS2
-│ └── ...
-│
-├── utils/ → Helper (format rupiah, dialogs, images)
-└── main.dart → Root app
+- `https://faisalarrp.online/api`
 
-Flow Sederhana
+Teknologi backend:
 
-UI (Page) → Notifier → Repository → API → Notifier → UI
+- PHP + MySQL (API sederhana untuk produk & pesanan)
+- Response dalam bentuk JSON
+- Di sisi Flutter dibungkus oleh lapisan **service** dan **repository** sehingga pemanggilan API terpisah dari UI.
 
-Layer ini memastikan:
+> **Catatan sesuai brief:** Data source menggunakan **simulasi API** melalui service layer, yang pada implementasi ini dihubungkan ke backend PHP. Di sisi Flutter tetap diperlakukan sebagai remote API (bisa dengan mudah diganti ke JSON lokal / mock service bila dibutuhkan).
 
-UI tetap bersih
+### Payment Gateway
 
-Logika bisnis disimpan di Notifier
+- **Midtrans Snap (Sandbox)**
+  - Digunakan untuk simulasi pembayaran otomatis (VA / e-wallet).
+  - Integrasi lewat backend PHP (server key & client key tidak disimpan di Flutter).
 
-Komunikasi API terpusat di Repository
+**Akun Midtrans Sandbox yang digunakan**  
+(Email hanya untuk identifikasi, password & server key dibagikan secara privat ke pewawancara, tidak di-commit ke repo publik):
 
-▶️ Cara Menjalankan Aplikasi
+- Email: `faisalarrahmanpratama@gmail.com`
 
-1. Clone Project
-   git clone <repo-url>
-   cd faisal_pedia
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-2. Install Dependencies
-   flutter pub get
+---
 
-3. Running di Mobile
-   flutter run
+## Arsitektur Aplikasi
 
-4. Running di Web
-   flutter run -d chrome
+Secara garis besar, aplikasi dibagi menjadi beberapa layer:
 
-Jika Chrome menolak request API karena CORS, jalankan:
+1. **Presentation Layer (UI)**
 
-flutter run -d chrome --web-browser-flag "--disable-web-security"
+   - Widget-page per fitur (Produk, Keranjang, Checkout, CS1 List, CS2 List, dsb).
+   - Menggunakan `ChangeNotifier` + `Consumer` (Provider) untuk menghubungkan UI ke state.
 
-🔐 Cara Simulasi Role (Pembeli, CS1, CS2)
-1️⃣ Pembeli
+2. **State / Logic Layer (Notifier / ViewModel)**
 
-Login menggunakan akun user role "pembeli"
+   - Contoh: `DetailProductNotifier`, `CartNotifier`, `Cs1OrderListNotifier`, `Cs2OrderListNotifier`, dll.
+   - Tanggung jawab:
+     - Mengambil data dari repository
+     - Menyimpan state lokal (list produk, keranjang, daftar pesanan, role aktif)
+     - Mengatur flow (ubah status order, validasi stok, dsb)
 
-Bisa:
+3. **Data Layer**
 
-Melihat produk
+   - **Repository**
+     - Misal: `ProductRepository`, `OrderRepository`
+     - Abstraksi: menyediakan fungsi seperti `getProducts()`, `createOrder()`, `getOrdersByStatus()`, dll.
+   - **Service / API Client**
+     - Mengurus pemanggilan HTTP ke backend (`https://faisalarrp.online/api/...`)
+     - Parsing JSON → model Dart
 
-Menambah ke keranjang
+4. **Model**
+   - `ProductModel`, `OrderModel`, `BuyerModel`, dsb.
+   - Menyimpan struktur data yang dipakai di seluruh app.
 
-Checkout (Midtrans SNAP)
+Dengan pembagian ini:
 
-Upload bukti
+- UI tidak memanggil API langsung.
+- Mudah untuk mengganti data source (misal: dari API ke file JSON lokal) cukup di layer repository / service.
 
-Melihat invoice
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-2️⃣ CS1
+---
 
-Login menggunakan akun role "cs1"
+## Cara Menjalankan Aplikasi
 
-Tugas:
+### Prerequisites
 
-Verifikasi pesanan
+- Flutter SDK (minimal versi 3.x)
+- Dart SDK (bundle dengan Flutter)
+- Emulator Android / iOS atau device fisik
 
-Validasi bukti pembayaran
+Cek instalasi:
 
-Menandai pesanan sebagai menunggu diproses CS2
-
-3️⃣ CS2
-
-Login menggunakan akun role "cs2"
-
-Tugas:
-
-Memproses pesanan
-
-Mengubah status ke: Sedang Diproses → Dikirim → Selesai
-
-Export CSV untuk laporan
-
-🗄️ Penyimpanan Data
-Local Storage (Frontend)
-
-Digunakan untuk menyimpan:
-
-Token login
-
-Info user
-
-Status login
-
-Library:
-
-shared_preferences
-
-Server Storage
-
-Database MySQL berisi tabel:
-
-users
-
-products
-
-orders
-
-order_items
-
-settings
-
-File disimpan di:
-
-/public_html/api/upload/
-
-PDF & Invoice
-
-Ditangani server via Dompdf
-
-Mode:
-
-Attachment = false → tampil di browser
-
-Attachment = true → otomatis download
-
-⏳ Mekanisme Auto Cancel 24 Jam
-
-Sistem otomatis membatalkan pesanan jika:
-
-Pesanan lebih dari 24 jam sejak dibuat & belum diverifikasi CS1
-
-Logika:
-
-Aplikasi mengirim timestamp created_at saat order dibuat.
-
-Pada API pengecekan order:
-
-$created = strtotime($order['created_at']);
-$now = time();
-
-if (($now - $created) >= 86400 && $order['status'] == 'MENUNGGU_UPLOAD_BUKTI') {
-    // 24 jam terlewati → batalkan
-    mysqli_query($con, "UPDATE orders SET status='DIBATALKAN' WHERE id_order='$id'");
-}
-
-Efek Auto-Cancel
-
-Status otomatis berubah menjadi DIBATALKAN
-
-Stok produk dikembalikan sesuai jumlah sebelumnya
-
-Order tidak muncul lagi untuk CS1/CS2
-
-📦 Fitur Utama
-
-Multi-role (Pembeli, CS1, CS2)
-
-Keranjang dinamis + stok realtime
-
-Midtrans SNAP Payment Gateway
-
-Upload bukti pembayaran
-
-Invoice PDF (view + download)
-
-Export CSV untuk CS2
-
-Auto-cancel 24 jam
-
-Email login notification
-
-Responsive Web & Mobile
+```sh
+flutter doctor
