@@ -1,0 +1,2 @@
+orderId,kode_order,buyer_name,total_amount,status,item_count,created_at,updated_at
+52,FP20251201111610115,"Faisal Arrahman Pratama",6120000,MENUNGGU_VERIFIKASI_CS1,6,"2025-12-01 11:16:10","2025-12-01 12:20:19"

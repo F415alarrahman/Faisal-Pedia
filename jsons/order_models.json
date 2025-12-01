@@ -1,0 +1,26 @@
+{
+  "id_order": 0,
+  "kode_order": "",
+  "buyer_name": "",
+  "buyer_phone": "",
+  "buyer_address": "",
+  "status": "",
+  "total_amount": 0,
+  "item_count": 0,
+  "created_at": "",
+  "updated_at": "",
+  "midtrans_order_id": "",
+  "midtrans_snap_token": "",
+  "payment_proof": "",
+  "items": [
+    {
+      "id_item": 0,
+      "id_product": 0,
+      "nama_product": "",
+      "harga": 0,
+      "qty": 0,
+      "subtotal": 0,
+      "thumbnail": ""
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+orderId,createdAt,buyerName,totalAmount,status,itemCount,lastUpdatedAt
+42,"2025-11-30 13:34:54","Faisal Arrahman Pratama",2010000,SELESAI,2,"2025-12-01 00:36:06"
+48,"2025-11-30 16:14:04","Faisal Arrahman Pratama",8910000,SELESAI,9,"2025-12-01 00:36:00"
